@@ -1,0 +1,23 @@
+Keyword,Help
+Key Inputs,Required Values for Fitting
+    Disk Thickness,The disc scaleheight in arcseconds.
+    Inclination,Inclination angle of the gas disc on the sky. Units of Degrees.
+    Int Flux,Total integrated flux you want the output gas to have. Units Jy/km/s.
+    Mask Clipping Level,Float for the clipping level. Higher number indicates a higher signal to noise ratio.
+    Position Angle,"Position angle of the disc, using the usual astronomical convention."
+    Velocity Dispersion,Velocity dispersion of the gas. Units of km/s.
+Simulation Options,Options to edit simulaion defaults
+    Method of Minimisation,Method of Minimsation .
+    Max Number of Iterations,Max Number of Iterations for fitting algorithm.
+    Number Of KinMS Cloudlet Samples,"Number of cloudlets to use to create the model. Large numbers will reduce numerical noise (especially in large cubes),  at the cost of increasing runtime."
+    Minimisation Methods,Methods used in minimisation.
+        Unbounded Methods,These methods do not consider any boundaries for variables.
+            BFGS,Minimization of scalar function of one or more variables using the BFGS algorithm.
+            CG,Minimization of scalar function of one or more variables using the conjugate gradient algorithm.
+            COBYLA,Minimize a scalar function of one or more variables using the Constrained Optimization BY Linear Approximation (COBYLA) algorithm.
+            Nelder-Mead,Minimization of scalar function of one or more variables using the Nelder-Mead algorithm.
+            Powell,Minimization of scalar function of one or more variables using the modified Powell algorithm.
+        Bounded Methods,The methods consider variable boundaries.
+            L-BFGS-B,Minimize a scalar function of one or more variables using the L-BFGS-B algorithm.
+            SLSQP,Minimize a scalar function of one or more variables using Sequential Least SQuares Programming (SLSQP).
+            TNC,Minimize a scalar function of one or more variables using a truncated Newton (TNC) algorithm.

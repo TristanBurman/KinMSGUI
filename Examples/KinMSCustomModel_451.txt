@@ -1,0 +1,31 @@
+ Xsize¦100
+
+ Ysize¦100
+
+ Vsize¦400
+
+ CellSize¦1
+
+ Inc¦45
+
+ dv¦1
+
+ BMJ¦4
+
+ BMIN¦4
+
+ BPA¦2
+
+ SB Equation¦0.1 * gaussian(Radius, 20, 2)
+
+ VP Equation¦175 * 2/np.pi * np.arctan(Radius)
+
+ Disk Thickness¦0.0
+ Position Angle¦0.0
+ Velocity Dispersion¦0.0
+ Int Flux¦0.0
+ Vsys¦0.0
+ Radius¦141.4213562373095
+ PhaseX¦0.0
+ PhaseY¦0.0
+ Samps¦100000

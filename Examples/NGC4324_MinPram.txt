@@ -1,0 +1,14 @@
+ SB Equation¦|0.1| * gaussian(Radius, |20|, |2|)
+
+ VP Equation¦|175| * 2/np.pi * np.arctan(|1| * Radius)
+
+ Disk Thickness¦1
+
+ Disk Angle¦230
+
+ Inclination¦65
+
+ Ratio¦4
+ Gas Sigma¦10
+
+ Int Flux¦30
