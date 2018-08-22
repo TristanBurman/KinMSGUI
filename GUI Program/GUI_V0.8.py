@@ -1,6 +1,6 @@
 ﻿#Changing Main dir
-import os
-os.chdir('GUI Resources/')
+#import os
+#os.chdir('GUI Resources/')
 #TKinter Modules
 import tkinter as TK 
 from tkinter import ttk
@@ -206,7 +206,6 @@ def SBLoadCSV(self):
      SB_CSVName = askopenfilename()
      self.SB_CSV = pd.read_csv(SB_CSVName, delimiter=',')
      self.SB_Rad, self.SB_Prof = self.SB_CSV['Radius'].values, self.SB_CSV['Surface Brightness'].values
-     self.SBLoaded = True
      #Update Equation Box
      self.SBEqu.delete(0, TK.END)
      self.SBEqu.insert(0, 'File Loaded - %s' %SB_CSVName)     
@@ -222,7 +221,6 @@ def VPLoadCSV(self):
     VP_CSVName = askopenfilename()
     self.VP_CSV = pd.read_csv(VP_CSVName, delimiter=',')
     self.VP_Rad, self.VP_Prof = self.VP_CSV['Radius'].values, self.VP_CSV['Velocity Profile'].values
-    self.VPLoaded = True
     #Update Equation Box
     self.VPEqu.delete(0, TK.END)
     self.VPEqu.insert(0, 'File Loaded - %s' %VP_CSVName)     
@@ -290,7 +288,7 @@ class ReadWin:
         filemenu.delete(0)
         Optionmenu.add_command(label="Simulation Options", command=lambda : self.SimOptions())
         Optionmenu.delete(0)
-        Helpmenu.add_command(label="Key Word Lookup", command=lambda : KeyWord())
+        Helpmenu.add_command(label="Key Word Lookup", command=lambda : KeyWord(self))
         Helpmenu.add_command(label="Website Documentation", command=lambda : LaunchWebpage())
         Helpmenu.delete(0)
         
@@ -697,18 +695,18 @@ class ReadWin:
             #Edit User Equation
             Radius = self.Radius
             if self.SBEquString.split('-')[0] == 'File Loaded ':
-                EditedSB, SBRadius = self.SB_Prof, self.SB_Rad
+                SB, SBRadius = self.SB_Prof, self.SB_Rad
             else:
-                EditedSB = eval(EditUserString(self.SBEquString, SBArray).replace('|',''))
+                SB = eval(EditUserString(self.SBEquString, SBArray).replace('|',''))
                 SBRadius = Radius
             if self.VPEquString.split('-')[0] == 'File Loaded ':
-                EditedVP, VPRadius = self.VP_Prof, self.VP_Rad
+                VP, VPRadius = self.VP_Prof, self.VP_Rad
             else:
-                EditedVP = eval(EditUserString(self.VPEquString, VPArray).replace('|','')) 
+                VP = eval(EditUserString(self.VPEquString, VPArray).replace('|','')) 
                 VPRadius = Radius
             #Create Simulation
             self.SimCube = KinMS(self.ClippedXsize, self.ClippedYsize, self.ClippedVsize, self.cellsize, self.dv, self.beamsize, Inc, gasSigma=GasSig,\
-                                 sbProf=EditedSB, sbRad=SBRadius, velProf=EditedVP, velRad=VPRadius, diskThick=DiskThic, \
+                                 sbProf=SB, sbRad=SBRadius, velProf=VP, velRad=VPRadius, diskThick=DiskThic, \
                                  nSamps=self.Samp, posAng=DiskAng, intFlux=Flux, vSys = Vsys, phaseCen=np.array([PosX,PosY]))
             #Determine Chi Square
             Chi = np.sum((self.CubeMask - self.SimCube)**2 / (self.RMS)**2)
@@ -757,7 +755,8 @@ class ReadWin:
         self.SBEquString, self.VPEquString = self.SBEqu.get(), self.VPEqu.get()
         self.Radius = np.arange(0, self.MaxRad, self.cellsize/2)
         #Both SB and VP Loaded
-        if self.SBLoaded == True and self.VPLoaded == True:
+        SBLoaded, VPLoaded = self.SBEquString.split('-')[0], self.VPEquString.split('-')[0] 
+        if SBLoaded == 'File Loaded ' and VPLoaded == 'File Loaded ':
             GuessList = [0,0,0, Inc, self.DiskAng, GasSig, Flux, self.DiskThic]
             BNDS = [(-self.xsize, self.xsize), (-self.ysize, self.ysize), (-1e50, 1e50)]
             for i in range(len(InputBounds)):
@@ -765,7 +764,7 @@ class ReadWin:
             Guess = np.asarray(GuessList)
             self.SBlen = 0
         #VP Loaded
-        elif self.SBLoaded == False and self.VPLoaded == True:
+        elif SBLoaded != 'File Loaded ' and VPLoaded == 'File Loaded ':
             SBArray, SPBounds = ExtractVarFromStr(self.SBEquString)
             GuessList = [0,0,0, Inc, self.DiskAng, GasSig, Flux, self.DiskThic]
             BNDS = [(-self.xsize, self.xsize), (-self.ysize, self.ysize), (-1e50, 1e50)]
@@ -777,7 +776,7 @@ class ReadWin:
             Guess = np.asarray(GuessList)
             self.SBlen = len(SBArray)
         #SB Loaded
-        elif self.SBLoaded == True and self.VPLoaded == False:
+        elif SBLoaded == 'File Loaded ' and VPLoaded != 'File Loaded ':
             VPArray, VPBounds = ExtractVarFromStr(self.VPEquString)
             GuessList = [0,0,0, Inc, self.DiskAng, GasSig, Flux, self.DiskThic]
             BNDS = [(-self.xsize, self.xsize), (-self.ysize, self.ysize), (-1e50, 1e50)]
@@ -789,7 +788,7 @@ class ReadWin:
             Guess = np.asarray(GuessList)
             self.SBlen, self.VPlen = 0, len(VPArray)
         #None Loaded
-        if self.SBLoaded == False and self.VPLoaded == False:
+        elif SBLoaded != 'File Loaded ' and VPLoaded != 'File Loaded ':
             #Creating Guess and Bound array
             VPArray, VPBounds = ExtractVarFromStr(self.VPEquString)
             SBArray, SPBounds = ExtractVarFromStr(self.SBEquString)
@@ -868,6 +867,7 @@ class ReadWin:
         
     def ShowPlot(self):
         #Check if thread is complete
+        SBLoaded, VPLoaded = self.SBEquString.split('-')[0], self.VPEquString.split('-')[0] 
         if self.Done == True:
             #Create Window
             OutputWindow = TK.Tk()
@@ -900,11 +900,11 @@ class ReadWin:
                 TK.Label(OutputWindow, text = self.guess[5], bg='black', fg='white', font='none 12 bold').grid(row=8, column=1, sticky='nw')
                 TK.Label(OutputWindow, text = self.guess[6], bg='black', fg='white', font='none 12 bold').grid(row=9, column=1, sticky='nw')
                 TK.Label(OutputWindow, text = self.guess[7], bg='black', fg='white', font='none 12 bold').grid(row=10, column=1, sticky='nw')
-                if self.SBLoaded == True:
+                if SBLoaded == 'File Loaded ':
                     TK.Label(OutputWindow, text = '.CSV Data Used', bg='black', fg='white', font='none 12 bold').grid(row=11, column=1, sticky='nw')
                 else:
                     TK.Label(OutputWindow, text = EditUserString(self.SBEquString, self.guess[8:self.SBlen+8]), bg='black', fg='white', font='none 12 bold').grid(row=11, column=1, sticky='nw')
-                if self.VPLoaded == True:
+                if VPLoaded == 'File Loaded ':
                     TK.Label(OutputWindow, text = '.CSV Data Used', bg='black', fg='white', font='none 12 bold').grid(row=11, column=1, sticky='nw')
                 else:
                     TK.Label(OutputWindow, text = EditUserString(self.VPEquString, self.guess[self.SBlen+8:]), bg='black', fg='white', font='none 12 bold').grid(row=12, column=1, sticky='nw')
@@ -920,14 +920,13 @@ class ReadWin:
                 TK.Label(OutputWindow, text = self.res.x[5], bg='black', fg='white', font='none 12 bold').grid(row=8, column=1, sticky='nw')
                 TK.Label(OutputWindow, text = self.res.x[6], bg='black', fg='white', font='none 12 bold').grid(row=9, column=1, sticky='nw')
                 TK.Label(OutputWindow, text = self.res.x[7], bg='black', fg='white', font='none 12 bold').grid(row=10, column=1, sticky='nw')
-                if self.SBLoaded == True:
+                if SBLoaded == 'File Loaded ':
                     TK.Label(OutputWindow, text = '.CSV Data Used', bg='black', fg='white', font='none 12 bold').grid(row=11, column=1, sticky='nw')
                 else:
                     TK.Label(OutputWindow, text = EditUserString(self.SBEquString, self.guess[8:self.SBlen+8]), bg='black', fg='white', font='none 12 bold').grid(row=11, column=1, sticky='nw')
-                if self.VPLoaded == True:
+                if VPLoaded == 'File Loaded ':
                     TK.Label(OutputWindow, text = '.CSV Data Used', bg='black', fg='white', font='none 12 bold').grid(row=11, column=1, sticky='nw')
                 else:
-                    print(EditUserString(self.VPEquString, self.guess[self.SBlen+8:]))
                     TK.Label(OutputWindow, text = EditUserString(self.VPEquString, self.guess[self.SBlen+8:]), bg='black', fg='white', font='none 12 bold').grid(row=12, column=1, sticky='nw')
                 TK.Label(OutputWindow, text = '%.3f Seconds' %self.TimeTaken, bg='black', fg='white', font='none 12 bold').grid(row=13, column=1, sticky='nw')
         #Plot latest guesses
