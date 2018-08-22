@@ -1,7 +1,4 @@
-﻿#Changing Main dir
-#import os
-#os.chdir('GUI Resources/')
-#TKinter Modules
+﻿#TKinter Modules
 import tkinter as TK 
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename
@@ -22,6 +19,9 @@ import webbrowser
 import time
 #Functions required for GUI operation 
 import GUIFunctions as GUI
+#Fixing incompatability issue
+import matplotlib
+matplotlib.use('TkAgg')
 
 #########################################################################################################################################################
 """
@@ -1220,6 +1220,8 @@ class CustomWin:
         print(self.Radius)
         print(type(self.Radius))
         Radius = np.arange(0, float(self.Radius), CellSize/2)
+        print(self.Radius)
+        print(type(self.Radius))
         Inc = float(self.UserInc.get())
         dv = float(self.Userdv.get())
         BMAJ, BMIN, BPA = float(self.UserBMAJ.get()), float(self.UserBMIN.get()), float(self.UserBPA.get())
@@ -1234,6 +1236,8 @@ class CustomWin:
         try:
             GUI.makeplots(SimCube, Xsize, Ysize, Vsize, CellSize,\
                           dv, Beam ,posang=self.DiskAng, pvdthick=self.DiskThick)  
+            self.StatusBox.delete(0, TK.END)
+            self.StatusBox.insert(0, 'Done')  
         except ValueError:
             self.StatusBox.delete(0, TK.END)
             self.StatusBox.insert(0, 'Additional inputs are required for more plots')  
@@ -1244,7 +1248,7 @@ Init GUI
 """
 #########################################################################################################################################################
 
-root = TK.Toplevel()  #Change to TK.Tk() for running ouside of spyder and TK.Toplevel() for inside
+root = TK.Tk()  #Change to TK.Tk() for running ouside of spyder and TK.Toplevel() for inside
 my_gui = BootWindow(root)
 root.mainloop()
 
