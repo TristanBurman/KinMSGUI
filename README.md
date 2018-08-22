@@ -8,7 +8,7 @@ Graphics Interface for the KinMS by Timothy A Davis. (https://github.com/Timothy
 	file named 'GUI_V0.8.py' located in the 'GUI Program' folder.
  
  
-- Built Using
+-Built Using
 
 	KinMS 	     - Kinetic Modeling Simulation programme Used to generate fits 
 	Tkinter	     - Used to Create the GUI Interface
