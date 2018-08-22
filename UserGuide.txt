@@ -1,0 +1,218 @@
+####################################################################################################################
+
+	KinMS User Guide
+
+####################################################################################################################
+
+
+-Installation
+	
+	To install the GUI download the files available at https://github.com/TristanBurman/KinMSGUI and run the 
+	file named 'GUI_V0.8.py' located in the 'GUI Program' folder.
+
+	Fore required modules please see 'Built Using section'
+
+
+------------------------------------------------------
+
+
+-Using the GUI
+
+	Launching the program displays a splash screen with two options, 'Model Fitting Mode' and 'Custom Model Mode'.
+	Model fitting mode allows for reading .fits files and using minimisation methods finds a model of best fit. 
+	The custom model mode allows users to input variables to create models without the need of a .fits file.
+
+	-Model Fitting Mode
+
+		- Menu Bar		
+
+			Firstly the menu bar at the top of the window has several functions that are non-essential 
+			to the fitting of the data. 
+
+			Under the 'File' menu there are options to save and load parameter .txt files. This allows
+			Users to save the initial input parameters for later use. The data read from the .fits 
+			file can be viewed and edited if needed. Finally there is the option to switch to Custom 
+			Model Mode.
+
+			The 'Options' tab is where the method of minimisation, the max iterations and the number 
+			of KinMS cloudlet samples can all be changed. The defaults are as follows...
+				Method of Minimisation   	  = Nelder-Mead
+				Maximum Number of Iterations 	  = 500
+				Number of KinMS Cloudlet Samples  = 100000	
+		 
+			The 'Help' tab contains a Keyword lookup for information on Minimisation methods and some
+			other terms. There is also a link to the github documentation page
+
+		- Required Inputs
+
+			Selecting the 'Select .fits file' launches a file browser. Use this to select the desired
+			.fits file. Once the file is loaded the name should appear in the box to the right of the 
+			button and the status box at the bottom of the window will update.
+
+			The next inputs are for the surface brightness and velocity profile. These can be in the
+			form of CSV file or python readable equation. An example of a CSV that can be read by the 
+			program can be seen in the "Examples" folder named "CSVLayoutExample.csv". For inputting 
+			an equation take a python friendly approach. The equations are modelled with 'Radius' as 
+			the variable and numpy functions can be inputted using np.[numpy function]. e.g
+				10 * np.exp(Radius)
+				np.pi * nparctan(Radius)
+			There are also buttons below each input with common equation examples with labelled inputs
+
+			Other Parameters are for the remaining single value inputs. Each input is labelled and units
+			provided.
+
+		- Variable Constants 
+			
+			The equation inputs are inputted 'as is' however if there is uncertainty for a variable this 
+			can also be accounted for in the fitting. To indicate a equation variable the '|' character
+			is used on either side of the variable. e.g
+				 10 * np.exp(Radius)                 <--- Equation with no variable values.
+				 |10| * np.exp(Radius)               <--- Equation where the '10' is considered a
+							                  guess and can be edited in fitting.
+				5 * np.pi * nparctan(Radius**2)      <--- Equation with no variable values.
+				|5| * np.pi * nparctan(Radius**|2|)  <--- Equation where both the '5' and the '2'
+									  are considered a guess and can be edited 
+                                                                          in fitting.
+			Boundaries can also be set for each. This will be explored in the next section
+
+		- Setting Boundaries
+
+			Any variable can have variable boundaries except the 'Mask Clip Level'. To set a boundary 
+			first the value must be set as a variable using the '|' character as described in the 
+			previous section. The boundaries are then set using the following structure... 
+				|Variable,(Minimum Value, Maximum Value)|
+			An example of this in equation inputting can be seen below...
+				 10 * np.exp(Radius)                 <--- Equation with no variable values.
+				 |10,(5,15)| * np.exp(Radius)        <--- Equation where the '10' is editable with
+									  a minimum of '5' and maximum of '15'.
+				5 * np.pi * nparctan(Radius**2)      <--- Equation with no variable values.
+				|5,(-10,10)| * np.pi * nparctan(Radius**|2,(1.5,2.5)|)  
+								     ^--- Equation where both the '5' and the '2'
+									  are editable with the bounds (Min=-10, 
+									  Max=10) and (Min=1.5, Max=2.5) 
+									  respectively.
+			For other parameters the boundaries can be set as follows
+				|45,(40,50)|    <--- Example input for Inclination (Range set to 40 --> 50 degrees)
+				|1,(0.5,2)|     <--- Example input for Disk Thickness 
+                                                     (Range set to 0.5 --> 2 arcseconds)
+
+			If method that requires boundaries is selected and boundaries are no proveded then the
+			default values are used. These boundaries are as follows...
+				Xpos			= -Xsize ---> Xsize (")
+				Ypos			= -Ysize ---> Ysize (")
+				Vsys			= -1e50 ---> 1e50 (km/s)
+				Disk Thickness		= 0 ---> 1e50 (")
+				Disk Angle		= 0 ---> 360 (deg)
+				Inclination		= 0 ---> 90 (deg)
+				Velocity Dispersion	= 0 ---> 100 (km/s)
+				Initial Flux		= 0 ---> 1e50 (Jy/km/s)
+			The boundries for values defined in the equations are all given bounds of...
+				Equations		= 0 ---> 1e50 (No Units)
+			Unless othwise stated.
+
+
+			NOTE: Some methods do not consider boundaries
+
+		- Show Results
+
+			This button plots the results of the fitting along with opening a window with the inputs 
+                        used. This can be done while the fitting is still running to see the most recent guess
+			however, it will not display input values until the fitting is complete. 
+
+		- Running the programme
+		
+			Clicking the button labelled 'Run' will begin the fitting programme will begin, the
+			progress bar will begin to fill and the status box will update to say 'Running'. The 
+			progress bar is an estimate based on the max iterations and method being used. When the 
+			fitting is complete the status box will read 'Complete' and then the best fit inputs can 
+			be shown.
+
+		Example files can be found in the 'Examples' folder to profide a fit of the NGC4324 galaxy. 
+
+
+	- 'Custom Model Mode'
+
+		- Menu Bar		
+
+			Under the 'File' menu there are options to save and load parameter .txt files. This allows
+			Users to save the parameters for later use. There is also the option to switch to Custom 
+			Model Mode.
+		 
+			The 'Help' tab contains a Keyword lookup for information on Minimisation methods and some
+			other terms. There is also a link to the github documentation page
+
+		- Inputs
+
+			The custom model mode does not support any form of variables and boundaries like the model fitting
+			so all inputs can be inputted regularly. 
+	
+			- Equation input
+	
+				Equation inputs are for the surface brightness and velocity profile. These can be in
+				the form of CSV file or python readable equation. An example of a CSV that can be 
+				read by the program can be seen in the "Examples" folder named "CSVLayoutExample.csv".
+				For inputting an equation take a python friendly approach. The equations are 
+				modelled with 'Radius' as the variable and numpy functions can be inputted using 
+				np.[numpy function]. e.g
+					10 * np.exp(Radius)
+					np.pi * nparctan(Radius)
+				There are also buttons below each input with common equation examples with labelled
+ 				inputs.
+		
+			For the beamsize input all boxes must be filed with each box corresponding to [BMAJ, BMIN, 
+			BPA] respectively. 
+
+		- Aditional Inputs
+		
+			These inputs are not required for creating the model but provide more information to the 
+			KinMS function for more detailed and complex models. This also contains the option to 
+			increase the number of KinMS Samples.
+	
+		An example can be seen in the 'Example' folder. Setting a Disk Thickness of greater than zero in 
+		aditional inputs plots the last two plots.
+
+
+------------------------------------------------------
+
+
+- Built Using
+
+	KinMS 	     - Kinetic Modeling Simulation programme Used to generate fits 
+	Tkinter	     - Used to Create the GUI Interface
+	Numpy 	     - Used for Calculations 
+	Scipy 	     - Specifically scipy.optimize.minimize for minimisation
+	Matplotlib   - Used for plotting data
+	Astropy      - For reading .fits files
+
+	Other modules used
+
+	Time	     - Used for timing fitting 
+	Threading    - Used to run minimisation on seperate thread to prevent GUI update blocking
+	Webbrowser   - Used to launch website
+
+
+------------------------------------------------------
+
+
+- License
+
+	Copyright (c) 2018 KinMS GUI
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,	
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+
