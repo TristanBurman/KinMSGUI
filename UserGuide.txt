@@ -8,9 +8,11 @@
 -Installation
 	
 	To install the GUI download the files available at https://github.com/TristanBurman/KinMSGUI and run the 
-	file named 'GUI_V0.8.py' located in the 'GUI Program' folder.
+	file named 'GUI_V0.8.py' located in the 'GUI Program' folder. 
+	
+	The module can also be installed using pip with the command 'pip install KinMSGUI' 
 
-	Fore required modules please see 'Built Using section'
+	For required modules please see 'Built Using section'
 
 
 ------------------------------------------------------
