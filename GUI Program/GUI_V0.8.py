@@ -1,4 +1,7 @@
-﻿#TKinter Modules
+﻿#Fixing incompatability issue
+import matplotlib
+matplotlib.use('TkAgg')
+#TKinter Modules
 import tkinter as TK 
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename
@@ -19,9 +22,7 @@ import webbrowser
 import time
 #Functions required for GUI operation 
 import GUIFunctions as GUI
-#Fixing incompatability issue
-import matplotlib
-matplotlib.use('TkAgg')
+
 
 #########################################################################################################################################################
 """
