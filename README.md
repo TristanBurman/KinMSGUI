@@ -1,11 +1,13 @@
 # KinMS GUI
-Graphics Interface for the KinMS by Timothy A Davis. (https://github.com/TimothyADavis/KinMS)
+Graphics Interface for the KinMS by Timothy A Davis. (https://github.com/TimothyADavis/KinMSpy)
 
 
 -Installation
 	
 	To install the GUI download the files available at https://github.com/TristanBurman/KinMSGUI and run the 
-	file named 'GUI_V0.8.py' located in the 'GUI Program' folder.
+	file named 'KinMS_GUI.py' located in the 'GUI Program' folder.
+	
+	The code can also be installed using the command 'pip install KinMSGUI'
  
  
 -Built Using
